@@ -10,6 +10,8 @@ from time import sleep
 from kafka import KafkaConsumer, KafkaProducer
 
 ind = 0
+read_from_topic = "1_RAW_tweets"
+parsed_topic_name = '2_COVID_parsed_tweets'
 
 def publish_message(producer_instance, topic_name, key, value):
     try:
@@ -60,9 +62,10 @@ def parse(tweetData):
             hashTags = [ hTag["text"] for hTag in tweetData["entities"]["hashtags"] ]
         
         if hashTags == []:
-            global ind
-            print("hashTags list empty " + str(ind))
-            ind += 1
+            return {}
+            # global ind
+            # print("hashTags list empty " + str(ind))
+            # ind += 1
         if "place" in tweetData and tweetData["place"] != None:
             location_full_name = tweetData["place"]["full_name"]
             location_coutry = tweetData["place"]["country"]
@@ -91,21 +94,26 @@ def parse(tweetData):
 if __name__ == '__main__':
     print('Consuming coronavirus raw tweets and re-publishing parsed ones..')
     parsed_records = []
-    topic_name = 'coronavirus_RAW_tweets'
-    parsed_topic_name = 'COVID_parsed_tweets'
-
-    consumer = KafkaConsumer(topic_name, auto_offset_reset='earliest',
-                             bootstrap_servers=['localhost:9092'], api_version=(0, 10), consumer_timeout_ms=1000)
+    
+    consumer = KafkaConsumer(read_from_topic, auto_offset_reset='earliest',
+                             bootstrap_servers=['localhost:9092'], api_version=(0, 10), consumer_timeout_ms=10000)
+    producer = connect_kafka_producer()
+    ind = 0
     for msg in consumer:
         html = json.loads(msg.value)
         record = parse(html)
-        parsed_records.append(record)
+        #parsed_records.append(record)
+        if record != {}:
+            print('Publishing record #{}'.format(ind))
+            ind += 1
+            publish_message(producer, parsed_topic_name, 'parsed', record)
 
     consumer.close()
-    sleep(5)
+    sleep(1.5)
 
-    if len(parsed_records) > 0:
-        print('Publishing records..')
-        producer = connect_kafka_producer()
-        for rec in parsed_records:
-            publish_message(producer, parsed_topic_name, 'parsed', rec)
+    # if len(parsed_records) > 0:
+    #     print('Publishing records..')
+    #     for rec in parsed_records:
+    #         publish_message(producer, parsed_topic_name, 'parsed', rec)
+            
+    print ("finished parsing tweets and publishing to new Kafka topic. Exiting..")

@@ -19,6 +19,7 @@ access_token_secret = "0lK2XYfh1oksmpymqgTRBLrhR5nGLMUr84N0yhicWuUq2"
 
 # Words to track
 WORDS = ['#coronavirus', '#COVID-19', '#COVID19', '#COVID'] #, '#SocialDistancing', '#pandemic']
+raw_tweets_topic = "1_RAW_tweets"
 
 class StreamListener(tweepy.StreamListener):
     # This is a class provided by tweepy to access the Twitter Streaming API.
@@ -40,7 +41,7 @@ class StreamListener(tweepy.StreamListener):
             if "user" in parsed and "location" in parsed["user"]:
                 if parsed["user"]["location"] != None:
                     # time.sleep(10) #seconds
-                    producer.send('coronavirus_RAW_tweets', data.encode('utf-8'))
+                    producer.send(raw_tweets_topic, data.encode('utf-8'))
                     print()
                     print(parsed["text"]) #["user"]["location"])
                     

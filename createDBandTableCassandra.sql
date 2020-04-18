@@ -16,4 +16,8 @@ Create table IF NOT EXISTS parsedTweetsTable
         Primary key(userID, location_country)
     );
 	
---DROP TABLE parsedTweetsTable
+-- DROP TABLE parsedTweetsTable;
+
+-- select count(*) from parsedtweetstable;
+
+-- truncate parsedtweetstable;
