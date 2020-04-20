@@ -1,0 +1,23 @@
+#start zookeeper
+.\bin\windows\zookeeper-server-start.bat config/zookeeper.properties
+
+#start kafka
+.\bin\windows\kafka-server-start.bat config/server.properties
+
+#list topics
+.\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
+
+#pull messages from specific topic
+.\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic COVID_parsed_tweets --from-beginning
+
+
+
+
+#delete messages from topic
+.\bin\windows\kafka-configs.bat --zookeeper localhost:2181 --alter --entity-type topics --add-config retention.ms=10 --entity-name btc_twitter_stream
+
+#enable default settings for topic
+.\bin\windows\kafka-configs.bat --zookeeper localhost:2181 --alter --entity-type topics --delete-config retention.ms --entity-name btc_twitter_stream
+
+# enable.topic.delete = true in server.properties at topic creation!!!!!!!! delete kafka topic
+.\bin\windows\kafka-topics.bat --zookeeper localhost:2181 --delete --topic twitter-stream

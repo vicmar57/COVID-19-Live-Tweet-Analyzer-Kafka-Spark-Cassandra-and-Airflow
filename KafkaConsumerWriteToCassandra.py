@@ -40,12 +40,9 @@ if __name__ == '__main__':
     batchSTMTs = []
     
     for msg in consumer:
-        if (ind < batch_thresh):
+        #if (ind < batch_thresh):
             try:
                 msgDict = json.loads(msg.value)
-                if msgDict == {}:
-                    print(msg)
-                    continue
                 
                 record = (msgDict["userID"], 
                           msgDict["tweetText"],
@@ -54,24 +51,35 @@ if __name__ == '__main__':
                           msgDict["location_coutry"],
                           msgDict["created_at"])
                 batchSTMTs.append(record)
-                batch.add(insertTweet, record)
+                #batch.add(insertTweet, record)
                 #print("added record no. " + str(ind) + " to batch.")
                 ind += 1
-                if (ind == batch_thresh): 
-                    #sleep(1)
-                    print("size of batch in bytes: {}".format(getsizeof(batchSTMTs)))
                     
-                    if (inc_count == 18):
-                        print("got here")
-                    session.execute(batch)
-                    print("executed batch INSERT of " + str(ind) + " records to Cassandra. Exiting...")
-                    ind = 0
-                    inc_count += 1
-                    batchSTMTs = []
+                def log_error(exc):
+                    print("Operation failed: %s", exc)
+            
+                def log_results(results):
+                     print("executed INSERT to Cassandra.") #stmt #" + str(ind) + "
+                
+                future = session.execute_async(insertTweet, record)
+                future.add_callbacks(log_results, log_error)
+                
+                
+                # if (ind == batch_thresh): 
+                #     #sleep(1)
+                #     print("size of batch in bytes: {}".format(getsizeof(batchSTMTs)))
+                    
+                #     if (inc_count == 18):
+                #         print("got here")
+                #     session.execute(batch)
+                #     print("executed batch INSERT of " + str(ind) + " records to Cassandra. Exiting...")
+                #     ind = 0
+                #     inc_count += 1
+                #     batchSTMTs = []
                 
             except Exception as e:
                 print("Exception: {}".format(e))
 
-    print("\nInserted {} records and failed, Bye Bye!!\n".format( batch_thresh*inc_count + ind))
+    print("\nInserted {} records, Bye Bye!!\n".format( batch_thresh*inc_count + ind))
     if consumer is not None:
         consumer.close()
