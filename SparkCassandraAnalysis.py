@@ -7,11 +7,12 @@ Created on Sun Apr 19 13:42:00 2020
 
 from cassandra.cluster import Cluster
 import pandas as pd
+from pandas import DataFrame
 
 cluster = Cluster(['127.0.0.1'], port = 9042)
 session = cluster.connect('twitteranalysisdb', wait_for_all_pools = True)
 
-pdDF = pd.DataFrame(list(session.execute('select * from parsedtweetstable;')))
+pdDF = pd.DataFrame(session.execute('select * from parsedtweetstable;'))
 
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, Row
