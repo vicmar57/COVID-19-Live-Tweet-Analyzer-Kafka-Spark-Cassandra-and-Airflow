@@ -9,7 +9,7 @@ After this process is done, an Apache Spark service is spun-up, to pull the data
 All these services are scheduled by Apache Airflow
 
 High level system architecture:
-![Alt text](covid-19 twitter analytics.png?raw=true "system architecture")
+![Alt text](covid-19-twitter-analytics.png?raw=true "system architecture")
 
 ## Usage
 (These steps apply for the state when Kafka, Airflow, Spark, and Cassandra are all setup and ready to go, and the user has a twitter API user, and credentials).
