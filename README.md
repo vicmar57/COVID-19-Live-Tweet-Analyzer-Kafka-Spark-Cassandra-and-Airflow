@@ -9,6 +9,12 @@ After this process is done, an Apache Spark service is spun-up, to pull the data
 All these services are scheduled by Apache Airflow
 
 High level system architecture:
+```
+NOTE
+Please don't take the project's architecture as an indicator of my skills or understanding of the technologies.
+This project was made for hands-on experience with the tech, in the pupose to set up and use each of the technologies in one project.
+```
+
 ![Alt text](covid-19-twitter-analytics.png?raw=true "system architecture")
 
 ## Usage
