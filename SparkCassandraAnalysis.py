@@ -49,8 +49,8 @@ splitted = sparkRDD.flatMap(lambda line : str(line).split(' '))
     # .reduce(lambda word : (word , 1))
 
 reduced = splitted.map(lambda word : (str(word), 1)) \
-    .reduceByKey(lambda a, b: a + b) \
-        .sortBy(lambda a: -a[1])
+                    .reduceByKey(lambda a, b: a + b) \
+                    .sortBy(lambda a: -a[1])
         
 topWords = reduced.collect()[:20]
 

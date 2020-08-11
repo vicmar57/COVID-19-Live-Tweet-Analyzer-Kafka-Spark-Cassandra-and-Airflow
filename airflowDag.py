@@ -20,6 +20,7 @@ default_args = {
     'email_on_retry': False,
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
+    'schedule_interval': timedelta(minutes = 10)
     }
 
 dag = DAG('simple', default_args=default_args)
